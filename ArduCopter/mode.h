@@ -100,6 +100,7 @@ public:
         AUTOROTATE =   26,  // Autonomous autorotation
         AUTO_RTL =     27,  // Auto RTL, this is not a true mode, AUTO will report as this mode if entered to perform a DO_LAND_START Landing sequence
         TURTLE =       28,  // Flip over after crash
+        PGSHOLD =      29,  // AltHold with gentle odometry-based position correction
 
         // Mode number 127 reserved for the "drone show mode" in the Skybrush
         // fork at https://github.com/skybrush-io/ardupilot
@@ -1401,6 +1402,44 @@ private:
     // final output
     float roll;   // final roll angle sent to attitude controller
     float pitch;  // final pitch angle sent to attitude controller
+
+};
+
+
+#define MODE_PGSHOLD_ENABLED 1
+
+class ModePGSHold : public Mode {
+
+public:
+    ModePGSHold(void);
+    Number mode_number() const override { return Number::PGSHOLD; }
+
+    bool init(bool ignore_checks) override;
+    void run() override;
+
+    bool requires_GPS() const override { return false; }
+    bool has_manual_throttle() const override { return false; }
+    bool allows_arming(AP_Arming::Method method) const override { return true; }
+    bool is_autopilot() const override { return false; }
+    bool has_user_takeoff(bool must_navigate) const override { return !must_navigate; }
+    bool allows_autotune() const override { return true; }
+
+    static const AP_Param::GroupInfo var_info[];
+
+protected:
+
+    const char *name()  const override { return "PGSHOLD"; }
+    const char *name4() const override { return "PGSH"; }
+
+private:
+
+    AP_Float _pos_p;           // position P gain (cd/cm)
+    AP_Float _vel_d;           // velocity D gain (cd/(cm/s))
+    AP_Float _max_corr_cd;     // maximum correction angle (cd)
+    AP_Float _latency;         // known sensor latency for dead-reckoning predictor (s)
+
+    Vector2f _pos_target_cm;   // XY position hold target in cm from EKF origin
+    bool     _pos_target_set;  // true once _pos_target_cm has been captured
 
 };
 

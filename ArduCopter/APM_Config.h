@@ -1,9 +1,11 @@
 // User specific config file.  Any items listed in config.h can be overridden here.
 
+#define MODE_AUTOROTATE_ENABLED 0          // disabled to save flash
+
 // uncomment the lines below to disable features (flash sizes listed are for APM2 boards and will underestimate savings on Pixhawk and other boards)
 //#define LOGGING_ENABLED       0            // disable logging to save 11K of flash space
 //#define MOUNT                 0            // disable the camera gimbal to save 8K of flash space
-//#define AUTOTUNE_ENABLED      0            // disable the auto tune functionality to save 7k of flash
+#define AUTOTUNE_ENABLED      0            // disable the auto tune functionality to save 7k of flash
 //#define NAV_GUIDED            0            // disable external navigation computer ability to control vehicle through MAV_CMD_NAV_GUIDED mission commands
 //#define MODE_ACRO_ENABLED     0            // disable acrobatic mode support
 //#define MODE_AUTO_ENABLED     0            // disable auto mode support

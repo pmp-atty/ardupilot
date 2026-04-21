@@ -179,6 +179,12 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
             break;
 #endif
 
+#if MODE_PGSHOLD_ENABLED
+        case Mode::Number::PGSHOLD:
+            ret = &mode_pgshold;
+            break;
+#endif
+
         default:
             break;
     }

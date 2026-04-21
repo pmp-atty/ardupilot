@@ -213,6 +213,7 @@ public:
     friend class ModeLand;
     friend class ModeLoiter;
     friend class ModePosHold;
+    friend class ModePGSHold;
     friend class ModeRTL;
     friend class ModeSmartRTL;
     friend class ModeSport;
@@ -1036,6 +1037,9 @@ private:
 #endif
 #if MODE_POSHOLD_ENABLED
     ModePosHold mode_poshold;
+#endif
+#if MODE_PGSHOLD_ENABLED
+    ModePGSHold mode_pgshold;
 #endif
 #if MODE_RTL_ENABLED
     ModeRTL mode_rtl;

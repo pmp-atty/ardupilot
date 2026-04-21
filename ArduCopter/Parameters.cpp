@@ -886,6 +886,12 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
     AP_SUBGROUPPTR(mode_flowhold_ptr, "FHLD", 26, ParametersG2, ModeFlowHold),
 #endif
 
+#if MODE_PGSHOLD_ENABLED
+    // @Group: PGSH
+    // @Path: mode_pgshold.cpp
+    AP_SUBGROUPPTR(mode_pgshold_ptr, "PGSH", 60, ParametersG2, ModePGSHold),
+#endif
+
 #if MODE_FOLLOW_ENABLED
     // @Group: FOLL
     // @Path: ../libraries/AP_Follow/AP_Follow.cpp
@@ -1259,6 +1265,9 @@ ParametersG2::ParametersG2(void)
 #endif
 #if MODE_FLOWHOLD_ENABLED
     ,mode_flowhold_ptr(&copter.mode_flowhold)
+#endif
+#if MODE_PGSHOLD_ENABLED
+    ,mode_pgshold_ptr(&copter.mode_pgshold)
 #endif
 #if MODE_FOLLOW_ENABLED
     ,follow()
