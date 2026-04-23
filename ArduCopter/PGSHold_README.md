@@ -1,6 +1,6 @@
 # PGSHold Flight Mode
 
-Mode number: **29**
+Mode number: **88**
 
 AltHold with gentle automatic position correction driven by external navigation (odometry).
 The altitude axis is identical to AltHold. On the horizontal axes, when the pilot centers the
@@ -27,6 +27,33 @@ The external nav system must send `ODOMETRY` (MAVLink message ID 331) with:
 | `child_frame_id` | `MAV_FRAME_BODY_FRD` (12) |
 
 Any other frame combination is silently dropped by ArduPilot.
+
+---
+
+## Mission Planner note
+
+Mission Planner does not automatically know the display name of this custom
+flight mode. To make `PGSHOLD` appear in the Mission Planner flight mode
+dropdowns and parameter value lists, you must manually edit the Mission
+Planner parameter definition file `ArduCopter.apm.pdef.xml` and add the
+`PGSHOLD` mode entry there.
+
+Typical Windows cache location:
+
+`C:\ProgramData\Mission Planner\ArduCopter.apm.pdef.xml`
+
+Typical Linux/Mono cache location:
+
+`~/.local/share/Mission Planner/ArduCopter.apm.pdef.xml`
+
+Add `PGSHOLD` to the Copter flight mode values, for example:
+
+```xml
+<value code="88">PGSHold</value>
+```
+
+After editing the file, restart Mission Planner. If Mission Planner rewrites
+the cache from downloaded metadata, you may need to re-apply the change.
 
 ---
 
