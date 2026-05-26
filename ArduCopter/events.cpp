@@ -190,6 +190,12 @@ void Copter::failsafe_gcs_on_event(void)
         case FS_GCS_ENABLED_BRAKE_OR_LAND:
             desired_action = FailsafeAction::BRAKE_LAND;
             break;
+        case FS_GCS_ENABLED_PGS:
+            desired_action = FailsafeAction::PGS_MODE;
+            break;
+        case FS_GCS_ENABLED_ALT:
+            desired_action = FailsafeAction::ALT_MODE;
+            break;
         default: // if an invalid parameter value is set, the fallback is RTL
             desired_action = FailsafeAction::RTL;
     }
@@ -504,6 +510,12 @@ void Copter::do_failsafe_action(FailsafeAction action, ModeReason reason){
             break;
         case FailsafeAction::BRAKE_LAND:
             set_mode_brake_or_land_with_pause(reason);
+            break;
+        case FailsafeAction::PGS_MODE:
+            set_mode(Mode::Number::PGSHOLD, reason);
+            break;
+        case FailsafeAction::ALT_MODE:
+            set_mode(Mode::Number::ALT_HOLD, reason);
             break;
     }
 
