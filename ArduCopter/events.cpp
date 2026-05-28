@@ -39,6 +39,12 @@ void Copter::failsafe_radio_on_event()
         case FS_THR_ENABLED_BRAKE_OR_LAND:
             desired_action = FailsafeAction::BRAKE_LAND;
             break;
+        case FS_THR_ENABLED_PGS:
+            desired_action = FailsafeAction::PGS_MODE;
+            break;
+        case FS_THR_ENABLED_ALT:
+            desired_action = FailsafeAction::ALT_MODE;
+            break;
         default:
             desired_action = FailsafeAction::LAND;
     }

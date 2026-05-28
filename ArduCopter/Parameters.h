@@ -375,7 +375,7 @@ public:
         k_param_autotune_min_d, // remove
         k_param_arming, // 252  - AP_Arming
         k_param_logger = 253, // 253 - Logging Group
-
+        k_param_fs_spoof_action = 256, // 256 - action to take on GPS spoofing failsafe
         // 254,255: reserved
 
         k_param_vehicle = 257, // vehicle common block of parameters
@@ -455,6 +455,7 @@ public:
 
     AP_Int8         land_repositioning;
     AP_Int8         fs_ekf_action;
+    AP_Int8         fs_spoof_action;
     AP_Int8         fs_crash_check;
     AP_Float        fs_ekf_thresh;
     AP_Int16        gcs_pid_mask;

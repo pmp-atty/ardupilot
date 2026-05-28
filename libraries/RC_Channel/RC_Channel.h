@@ -299,6 +299,9 @@ public:
 
         // this must be higher than any aux function above
         AUX_FUNCTION_MAX =   308,
+        SPOOF_FAILSAFE_RECOVER = 400, // trigger spoof failsafe recovery (e.g. switch to a mode that doesn't rely on GPS, or disable GPS dependent features like EKF GPS fusion or GPS yaw)
+        SPOOF_FAILSAFE_TRIGGER = 401, // trigger spoof failsafe (e.g. switch to a mode that doesn't rely on GPS, or disable GPS dependent features like EKF GPS fusion or GPS yaw)
+        SPOOF_GPS_LOCK_SWITCH = 402, // switch to control GPS spoofing lock state
     };
 
     // auxiliary switch handling (n.b.: we store this as 2-bits!):

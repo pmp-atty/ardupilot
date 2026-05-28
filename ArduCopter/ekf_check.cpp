@@ -175,6 +175,11 @@ void Copter::failsafe_ekf_event()
         return;
     }
 
+    if (failsafe.spoof) {
+        // if spoof failsafe is also active, then we are likely in a situation where the EKF is giving bad data due to GPS spoofing.  In this case, we should follow the spoof failsafe action rather than the EKF failsafe action
+        return;
+    }
+
     // sometimes LAND *does* require GPS so ensure we are in non-GPS land
     if (flightmode->mode_number() == Mode::Number::LAND && landing_with_GPS()) {
         mode_land.do_not_use_GPS();
@@ -188,9 +193,18 @@ void Copter::failsafe_ekf_event()
 
     // take action based on fs_ekf_action parameter
     switch (g.fs_ekf_action) {
+        case FS_EKF_ACTION_DO_NOTHING:
+            // do not change flight mode, but log the event
+            break;
         case FS_EKF_ACTION_ALTHOLD:
             // AltHold
             if (failsafe.radio || !set_mode(Mode::Number::ALT_HOLD, ModeReason::EKF_FAILSAFE)) {
+                set_mode_land_with_pause(ModeReason::EKF_FAILSAFE);
+            }
+            break;
+        case FS_EKF_ACTION_PGSHOLD:
+            // PgsHold
+            if (failsafe.radio || !set_mode(Mode::Number::PGSHOLD, ModeReason::EKF_FAILSAFE)) {
                 set_mode_land_with_pause(ModeReason::EKF_FAILSAFE);
             }
             break;

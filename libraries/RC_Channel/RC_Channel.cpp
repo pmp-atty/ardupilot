@@ -60,6 +60,9 @@ extern const AP_HAL::HAL& hal;
 #include <AP_Torqeedo/AP_Torqeedo.h>
 #include <AP_Vehicle/AP_Vehicle_Type.h>
 #include <AP_Parachute/AP_Parachute_config.h>
+#include "AP_NavEKF3/AP_NavEKF3_Spoof.h"
+
+
 #define SWITCH_DEBOUNCE_TIME_MS  200
 
 const AP_Param::GroupInfo RC_Channel::var_info[] = {
@@ -254,6 +257,9 @@ const AP_Param::GroupInfo RC_Channel::var_info[] = {
     // @Values{Copter, Rover, Plane}: 212:Mount1 Roll, 213:Mount1 Pitch, 214:Mount1 Yaw, 215:Mount2 Roll, 216:Mount2 Pitch, 217:Mount2 Yaw
     // @Values{Copter}: 219:Transmitter Tuning
     // @Values{Copter, Rover, Plane}: 300:Scripting1, 301:Scripting2, 302:Scripting3, 303:Scripting4, 304:Scripting5, 305:Scripting6, 306:Scripting7, 307:Scripting8
+    // @Values{Copter, Rover, Plane, Blimp}: 400:GPS Spoof failsafe recover
+    // @Values{Copter, Rover, Plane, Blimp}: 401:GPS Spoof failsafe trigger
+    // @Values{Copter, Rover, Plane, Blimp}: 402:GPS Spoof lock switch
     // @User: Standard
     AP_GROUPINFO_FRAME("OPTION",  6, RC_Channel, option, 0, AP_PARAM_FRAME_COPTER|AP_PARAM_FRAME_ROVER|AP_PARAM_FRAME_PLANE|AP_PARAM_FRAME_BLIMP),
 
@@ -775,6 +781,15 @@ void RC_Channel::init_aux_function(const AUX_FUNC ch_option, const AuxSwitchPos 
         run_aux_function(ch_option, ch_flag, AuxFuncTriggerSource::INIT);
         break;
 #endif
+    case AUX_FUNC::SPOOF_FAILSAFE_RECOVER:
+        run_aux_function(ch_option, ch_flag, AuxFuncTriggerSource::INIT);
+        break;
+    case AUX_FUNC::SPOOF_FAILSAFE_TRIGGER:
+        run_aux_function(ch_option, ch_flag, AuxFuncTriggerSource::INIT);
+        break;
+    case AUX_FUNC::SPOOF_GPS_LOCK_SWITCH:
+        run_aux_function(ch_option, ch_flag, AuxFuncTriggerSource::INIT);
+        break;
     default:
         GCS_SEND_TEXT(MAV_SEVERITY_WARNING, "Failed to init: RC%u_OPTION: %u\n",
                         (unsigned)(this->ch_in+1), (unsigned)ch_option);
@@ -893,6 +908,9 @@ const RC_Channel::LookupTable RC_Channel::lookuptable[] = {
 #endif
 #if HAL_MOUNT_ENABLED
     { AUX_FUNC::MOUNT_LRF_ENABLE, "Mount LRF Enable"},
+    { AUX_FUNC::SPOOF_FAILSAFE_RECOVER, "Spoof Failsafe Recover"},
+    { AUX_FUNC::SPOOF_FAILSAFE_TRIGGER, "Spoof Failsafe Trigger"},
+    { AUX_FUNC::SPOOF_GPS_LOCK_SWITCH, "Spoof GPS Lock Switch"},
 #endif
 };
 
@@ -1874,7 +1892,27 @@ bool RC_Channel::do_aux_function(const AUX_FUNC ch_option, const AuxSwitchPos ch
         // monitored by the library itself
         break;
 #endif
-
+    case AUX_FUNC::SPOOF_FAILSAFE_RECOVER:
+        // this is used to allow testing of failsafe recovery by spoofing a failsafe condition and then recovering from it by switching the channel back
+        if (ch_flag == AuxSwitchPos::HIGH) {
+            gps_spoof_request_clear();
+        }
+        break;
+    case AUX_FUNC::SPOOF_FAILSAFE_TRIGGER:
+        // this is used to allow testing of failsafe trigger by spoofing a failsafe condition
+        if (ch_flag == AuxSwitchPos::HIGH) {
+            gps_spoof_trigger_request_set();
+        }
+        break;  
+    case AUX_FUNC::SPOOF_GPS_LOCK_SWITCH:
+        // this is used to allow testing of failsafe trigger by spoofing a failsafe condition
+        if (ch_flag == AuxSwitchPos::HIGH) {
+            gps_spoof_set_latched(true);
+        }
+        if (ch_flag == AuxSwitchPos::LOW) {
+            gps_spoof_set_latched(false);
+        }
+        break;  
     default:
         GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Invalid channel option (%u)", (unsigned int)ch_option);
         return false;

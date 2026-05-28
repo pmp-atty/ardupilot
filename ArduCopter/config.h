@@ -97,6 +97,14 @@
  # define PREARM_MAX_ALT_DISPARITY_CM       100     // barometer and inertial nav altitude must be within this many centimeters
 #endif
 
+
+//////////////////////////////////////////////////////////////////////////////
+//  Spoof Failsafe
+#ifndef FS_SPOOF_ACTION_DEFAULT
+ # define FS_SPOOF_ACTION_DEFAULT         FS_SPOOF_ACTION_ALTHOLD  // Spoof failsafe triggers alt hold by default
+#endif
+
+
 //////////////////////////////////////////////////////////////////////////////
 //  EKF Failsafe
 #ifndef FS_EKF_ACTION_DEFAULT

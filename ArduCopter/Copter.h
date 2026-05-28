@@ -413,10 +413,11 @@ private:
         uint8_t terrain             : 1; // true if the missing terrain data failsafe has occurred
         uint8_t adsb                : 1; // true if an adsb related failsafe has occurred
         uint8_t deadreckon          : 1; // true if a dead reckoning failsafe has triggered
+        uint8_t spoof               : 1; // true if a spoof failsafe has triggered
     } failsafe;
 
     bool any_failsafe_triggered() const {
-        return failsafe.radio || battery.has_failsafed() || failsafe.gcs || failsafe.ekf || failsafe.terrain || failsafe.adsb || failsafe.deadreckon;
+        return failsafe.radio || battery.has_failsafed() || failsafe.gcs || failsafe.ekf || failsafe.terrain || failsafe.adsb || failsafe.deadreckon || failsafe.spoof;
     }
 
     // dead reckoning state
@@ -590,6 +591,8 @@ private:
         uint32_t takeoff_time_ms;
         float takeoff_alt_cm;
     } gndeffect_state;
+
+    bool gps_spoof_latched = false;   // прапор для EKF
 
     bool standby_active;
 
@@ -765,6 +768,11 @@ private:
     void parachute_check();
     void parachute_release();
     void parachute_manual_release();
+
+    void spoof_check();
+    void failsafe_spoof_event();
+    void failsafe_spoof_off_event(void);
+    void failsafe_spoof_recheck();
 
     // ekf_check.cpp
     void ekf_check();

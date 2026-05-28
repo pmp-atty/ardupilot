@@ -132,6 +132,10 @@
 #define HAL_EKF_IMU_MASK_DEFAULT 3       // Default to using two IMUs
 #endif
 
+#define FS_SPOOF_MAX_STR_DEFAULT         3000.0f  // Spoof failsafe max strength default
+#define FS_SPOOF_MAX_DEG_DEFAULT         25.0f  // Spoof failsafe max degree default
+
+
 // Define tuning parameters
 const AP_Param::GroupInfo NavEKF3::var_info[] = {
 
@@ -742,6 +746,16 @@ const AP_Param::GroupInfo NavEKF3::var_info2[] = {
     // @Bitmask: 0:JammingExpected
     // @User: Advanced
     AP_GROUPINFO("OPTIONS",  11, NavEKF3, _options, 0),
+
+    // @Param: MAG_STR_LIM
+    // @DisplayName: Magnetometer strength limit
+    // @Description: This sets the maximum strength of the magnetic field that will be accepted by the EKF. This is primarily to provide protection against magnetic interference that can cause large EKF attitude errors. The limit is applied to the strength of the earth magnetic field vector that is estimated by the EKF, so that it is not affected by changes in the magnetic field strength due to vehicle motion (eg change in altitude or geographic location). Set to zero to disable the limit.
+    // @Range: 0 200
+    // @Units: mGauss
+    // @User: Advanced
+    AP_GROUPINFO("MAG_STR_LIM", 12, NavEKF3, _mag_str_limit, FS_SPOOF_MAX_STR_DEFAULT),
+
+    AP_GROUPINFO("MAG_DIR_LIM", 13, NavEKF3, _mag_dir_limit_deg, FS_SPOOF_MAX_DEG_DEFAULT),
 
     AP_GROUPEND
 };

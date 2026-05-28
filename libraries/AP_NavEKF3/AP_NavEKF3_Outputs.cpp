@@ -427,6 +427,108 @@ void NavEKF3_core::getMagXYZ(Vector3f &magXYZ) const
     magXYZ = (stateStruct.body_magfield*1000.0f).tofloat();
 }
 
+
+bool NavEKF3_core::getCompassField(Vector3f &magXYZ) const
+{
+    const auto &compass = dal.compass();
+
+    if (!compass.available()) {
+        return false;
+    }
+
+    if (!compass.healthy(magSelectIndex)) {
+        return false;
+    }
+
+    magXYZ = compass.get_field(magSelectIndex);
+
+    return !magXYZ.is_nan() && !magXYZ.is_zero();
+}
+
+void NavEKF3_core::getMagStrNEDXYZDiff(float &diff) const
+{
+    Vector3f magNED, magXYZ;
+
+    getMagNED(magNED);
+
+    if (!getCompassField(magXYZ) || magNED.is_zero()) {
+        diff = FLT_MAX;
+        return;
+    }
+
+    diff = fabsf(magNED.length() - magXYZ.length());
+}
+
+void NavEKF3_core::getMagDirNEDXYZDiff(float &angle_deg) const
+{
+    Vector3f magNED, magXYZ;
+
+    getMagNED(magNED);
+
+    if (!getCompassField(magXYZ) || magNED.is_zero()) {
+        angle_deg = 180.0f;
+        return;
+    }
+
+    Matrix3f Tbn;
+    getRotationBodyToNED(Tbn);
+
+    Vector3f expectedBody = Tbn.transposed() * magNED;
+
+    if (expectedBody.is_zero() || expectedBody.is_nan()) {
+        angle_deg = 180.0f;
+        return;
+    }
+
+    expectedBody.normalize();
+    magXYZ.normalize();
+
+    const float dot = constrain_float(
+        expectedBody * magXYZ,
+        -1.0f,
+         1.0f
+    );
+
+    angle_deg = degrees(acosf(dot));
+}
+
+bool NavEKF3_core::isMagDirectionHealthy(void) const
+{
+    float angle_deg;
+    getMagDirNEDXYZDiff(angle_deg);
+
+    return angle_deg < frontend->_mag_dir_limit_deg;
+}
+bool NavEKF3_core::isMagStrengthHealthy(void) const
+{
+    float diff;
+    getMagStrNEDXYZDiff(diff);
+
+    return diff < frontend->_mag_str_limit;
+}
+bool NavEKF3_core::isNEDXYZDiffHealthy(void) const
+{
+
+    float mag_str_diff = 0;
+    float mag_dir_diff = 0;
+
+    getMagStrNEDXYZDiff(mag_str_diff);
+    getMagDirNEDXYZDiff(mag_dir_diff);
+
+    bool healthy = true;
+
+    if (frontend->_mag_str_limit > 0) {
+        healthy &= isMagStrengthHealthy();
+    }
+
+    if (frontend->_mag_dir_limit_deg > 0) {
+        healthy &= isMagDirectionHealthy();
+    }
+
+    return healthy;
+}
+
+
 // return magnetometer offsets
 // return true if offsets are valid
 bool NavEKF3_core::getMagOffsets(uint8_t mag_idx, Vector3f &magOffsets) const

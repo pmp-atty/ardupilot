@@ -6,6 +6,7 @@
 #include <AP_Logger/AP_Logger.h>
 #include <AP_DAL/AP_DAL.h>
 #include <AP_InternalError/AP_InternalError.h>
+#include "AP_NavEKF3_Spoof.h"
 
 #if AP_RANGEFINDER_ENABLED
 /********************************************************
@@ -544,6 +545,26 @@ bool NavEKF3_core::readDeltaVelocity(uint8_t ins_index, Vector3F &dVel, ftype &d
 // check for new valid GPS data and update stored measurement if available
 void NavEKF3_core::readGpsData()
 {
+
+    if (gps_spoof_is_latched()) {
+        gpsGoodToAlign = false;
+        gpsIsInUse = false;
+
+        // якщо в твоїй версії є цей прапор
+        gpsDataToFuse = false;
+
+        return;
+    }
+
+    const bool mag_bad = !isNEDXYZDiffHealthy();
+
+    const bool spoof_suspected =
+        mag_bad;
+
+    if (inFlight && spoof_suspected) {
+        gps_spoof_trigger_request_set();
+    }
+
     // check for new GPS data
     const auto &gps = dal.gps();
 

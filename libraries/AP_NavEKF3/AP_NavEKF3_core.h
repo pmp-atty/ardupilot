@@ -207,6 +207,19 @@ public:
     // return body magnetic field estimates in measurement units / 1000
     void getMagXYZ(Vector3f &magXYZ) const;
 
+    void getMagStrNEDXYZDiff(float &diff) const;
+    
+    void getMagDirNEDXYZDiff(float &angle) const;
+
+    bool isMagDirectionHealthy(void) const;
+
+    bool isMagStrengthHealthy(void) const;
+
+    bool isNEDXYZDiffHealthy(void) const;
+
+    bool getCompassField(Vector3f &magXYZ) const;
+    
+
     // return the index for the active sensors
     uint8_t getActiveAirspeed() const;
 

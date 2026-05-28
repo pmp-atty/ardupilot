@@ -387,6 +387,13 @@ const AP_Param::Info Copter::var_info[] = {
     // @User: Advanced
     GSCALAR(fs_ekf_action, "FS_EKF_ACTION",    FS_EKF_ACTION_DEFAULT),
 
+    // @Param: FS_SPF_ACTION
+    // @DisplayName: Spoof Failsafe Action
+    // @Description: Controls the action that will be taken when a spoof failsafe is invoked
+    // @Values: 1:Land, 2:AltHold, 3:Land even in Stabilize
+    // @User: Advanced
+    GSCALAR(fs_spoof_action, "FS_SPF_ACTION",    FS_SPOOF_ACTION_DEFAULT),
+
     // @Param: FS_EKF_THRESH
     // @DisplayName: EKF failsafe variance threshold
     // @Description: Allows setting the maximum acceptable compass, velocity, position and height variances. Used in arming check and EKF failsafe.
