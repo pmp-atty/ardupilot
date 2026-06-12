@@ -620,7 +620,8 @@ private:
         AUTO_DO_LAND_START = 6,
         BRAKE_LAND         = 7,
         PGS_MODE           = 8,
-        ALT_MODE           = 9
+        ALT_MODE           = 9,
+        RTHV_MODE           = 10,
     };
 
     enum class FailsafeOption {

@@ -45,6 +45,9 @@ void Copter::failsafe_radio_on_event()
         case FS_THR_ENABLED_ALT:
             desired_action = FailsafeAction::ALT_MODE;
             break;
+        case FS_THR_ENABLED_RTHV:
+            desired_action = FailsafeAction::RTHV_MODE;
+            break;
         default:
             desired_action = FailsafeAction::LAND;
     }
@@ -201,6 +204,9 @@ void Copter::failsafe_gcs_on_event(void)
             break;
         case FS_GCS_ENABLED_ALT:
             desired_action = FailsafeAction::ALT_MODE;
+            break;
+        case FS_GCS_ENABLED_RTHV:
+            desired_action = FailsafeAction::RTHV_MODE;
             break;
         default: // if an invalid parameter value is set, the fallback is RTL
             desired_action = FailsafeAction::RTL;
@@ -522,6 +528,9 @@ void Copter::do_failsafe_action(FailsafeAction action, ModeReason reason){
             break;
         case FailsafeAction::ALT_MODE:
             set_mode(Mode::Number::ALT_HOLD, reason);
+            break;
+        case FailsafeAction::RTHV_MODE:
+            set_mode(Mode::Number::RTHV, reason);
             break;
     }
 

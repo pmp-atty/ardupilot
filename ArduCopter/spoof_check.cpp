@@ -84,6 +84,11 @@ void Copter::failsafe_spoof_event()
                 set_mode_land_with_pause(ModeReason::SPOOF_FAILSAFE);
             }
             break;
+        case FS_SPOOF_ACTION_RTHV:
+            if (!set_mode(Mode::Number::RTHV, ModeReason::SPOOF_FAILSAFE)) {
+                set_mode_land_with_pause(ModeReason::SPOOF_FAILSAFE);
+            }
+            break;
         case FS_SPOOF_ACTION_DO_NOTHING:
              // Do nothing, but log the event
              break;
