@@ -582,6 +582,10 @@ public:
     // we need a pointer to the mode for the G2 table
     void *mode_pgshold_ptr;
 #endif
+#if MODE_RTHV_ENABLED
+    // we need a pointer to the mode for the G2 table
+    void *mode_rthv_ptr;
+#endif
 
 #if MODE_FOLLOW_ENABLED
     // follow

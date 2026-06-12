@@ -692,6 +692,13 @@ void Copter::three_hz_loop()
 // one_hz_loop - runs at 1Hz
 void Copter::one_hz_loop()
 {
+
+if (motors->armed() && !ap.land_complete && !failsafe.spoof) {
+    _rthv_outbound_time_ms += 1000;
+    }
+    if (!motors->armed()) {
+        _rthv_outbound_time_ms = 0;
+    }
 #if HAL_LOGGING_ENABLED
     if (should_log(MASK_LOG_ANY)) {
         Log_Write_Data(LogDataID::AP_STATE, ap.value);

@@ -1245,6 +1245,10 @@ const AP_Param::GroupInfo ParametersG2::var_info2[] = {
     // @User: Advanced
     AP_GROUPINFO("FS_EKF_FILT", 8, ParametersG2, fs_ekf_filt_hz, FS_EKF_FILT_DEFAULT),
 
+    AP_SUBGROUPPTR(mode_rthv_ptr, "RTHV_", 10, ParametersG2, ModeRTHV),
+
+
+
     // ID 62 is reserved for the AP_SUBGROUPEXTENSION
 
     AP_GROUPEND
@@ -1275,6 +1279,9 @@ ParametersG2::ParametersG2(void)
 #endif
 #if MODE_PGSHOLD_ENABLED
     ,mode_pgshold_ptr(&copter.mode_pgshold)
+#endif
+#if MODE_RTHV_ENABLED
+    ,mode_rthv_ptr(&copter.mode_rthv)
 #endif
 #if MODE_FOLLOW_ENABLED
     ,follow()

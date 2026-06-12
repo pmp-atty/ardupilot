@@ -214,6 +214,7 @@ public:
     friend class ModeLoiter;
     friend class ModePosHold;
     friend class ModePGSHold;
+    friend class ModeRTHV;
     friend class ModeRTL;
     friend class ModeSmartRTL;
     friend class ModeSport;
@@ -593,7 +594,7 @@ private:
     } gndeffect_state;
 
     bool gps_spoof_latched = false;   // прапор для EKF
-
+    uint32_t _spoof_check_suppress_until_ms = 0;
     bool standby_active;
 
     static const AP_Scheduler::Task scheduler_tasks[];
@@ -961,6 +962,9 @@ private:
     void radio_passthrough_to_motors();
     int16_t get_throttle_mid(void);
 
+    uint32_t _rthv_outbound_time_ms;
+
+
     // sensors.cpp
     void read_barometer(void);
     void init_rangefinder(void);
@@ -1050,6 +1054,9 @@ private:
 #endif
 #if MODE_PGSHOLD_ENABLED
     ModePGSHold mode_pgshold;
+#endif
+#if MODE_RTHV_ENABLED
+    ModeRTHV mode_rthv;
 #endif
 #if MODE_RTL_ENABLED
     ModeRTL mode_rtl;

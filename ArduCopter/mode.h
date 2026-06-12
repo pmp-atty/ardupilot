@@ -101,6 +101,7 @@ public:
         AUTO_RTL =     27,  // Auto RTL, this is not a true mode, AUTO will report as this mode if entered to perform a DO_LAND_START Landing sequence
         TURTLE =       28,  // Flip over after crash
         PGSHOLD =      88,  // AltHold with gentle odometry-based position correction
+        RTHV =         89,  // Return to home with vertical position control
 
         // Mode number 127 reserved for the "drone show mode" in the Skybrush
         // fork at https://github.com/skybrush-io/ardupilot
@@ -493,6 +494,60 @@ protected:
     const char *name4() const override { return "ALTH"; }
 
 private:
+
+};
+
+#define MODE_RTHV_ENABLED 1
+
+class ModeRTHV : public Mode {
+
+public:
+    // inherit constructor
+    using Mode::Mode;
+    Number mode_number() const override { return Number::RTHV; }
+
+    bool init(bool ignore_checks) override;
+    void run() override;
+
+    bool requires_GPS() const override { return false; }
+    bool has_manual_throttle() const override { return false; }
+    bool allows_arming(AP_Arming::Method method) const override { return false; };
+    bool is_autopilot() const override { return false; }
+    bool has_user_takeoff(bool must_navigate) const override {
+        return !must_navigate;
+    }
+    bool allows_autotune() const override { return true; }
+    bool allows_flip() const override { return true; }
+#if FRAME_CONFIG == HELI_FRAME
+    bool allows_inverted() const override { return true; };
+#endif
+
+    static const AP_Param::GroupInfo var_info[];
+
+
+protected:
+
+    const char *name() const override { return "RTHV"; }
+    const char *name4() const override { return "RTHV"; }
+
+private:
+    float _target_yaw_cd = 0;
+    float _rthv_pitch_cd = 0;
+    uint32_t _last_update_ms = 0;
+    uint32_t _rthv_flight_time_ms;
+    uint32_t _rthv_start_ms;
+    uint32_t _rthv_return_time_ms;
+    bool _rthv_active;
+    bool return_time_done = false;
+    bool action_notify = true;
+    AP_Float _time_gain;
+    AP_Float _alt_slew;
+    AP_Float _alt_target;
+    AP_Float _pitch_rate;
+    AP_Float _time_max;
+    AP_Float _time_min;
+    AP_Float _action;
+    AP_Float _yaw_comp;
 
 };
 

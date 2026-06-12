@@ -3,7 +3,9 @@
 
 void Copter::spoof_check()
 {
-
+    if (AP_HAL::millis() < _spoof_check_suppress_until_ms) {
+        return;
+    }
     if (gps_spoof_clear_requested()) {
         gps_spoof_clear_request_reset();
         failsafe_spoof_off_event();
